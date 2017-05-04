@@ -22,7 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable{
+public class Controller implements Initializable {
 	
 	
 	//region Private fields
@@ -37,33 +37,42 @@ public class Controller implements Initializable{
 	// MenuBar
 	
 	// Menu - File
-	@FXML private MenuItem newFile;
-	@FXML private MenuItem saveFile;
-	@FXML private MenuItem saveAsFile;
-	@FXML private MenuItem quitFile;
+	@FXML
+	private MenuItem newFile;
+	@FXML
+	private MenuItem saveFile;
+	@FXML
+	private MenuItem saveAsFile;
+	@FXML
+	private MenuItem quitFile;
 	
 	// Menu - Edit
 	// TODO: Evaluate needed functions and controls for this menu
 	
 	// Menu - Help
-	@FXML private MenuItem about;
+	@FXML
+	private MenuItem about;
 	
 	
 	// SplitPane
 	
 	// Accordion
 	// TitledPane - Barcode
-	@FXML	private ComboBox<IBarcode> iBarcodeComboBox;
-	@FXML private Button generate;
+	@FXML
+	private ComboBox<IBarcode> iBarcodeComboBox;
+	@FXML
+	private Button generate;
 	
 	// TitledPane - Configuration
-	@FXML private AnchorPane configuration;
+	@FXML
+	private AnchorPane configuration;
 	
 	// TitledPane - Export Settings
 	// TODO: Evaluate needed functions and controls for this menu
 	
 	// ImageView - Barcode PreView
-	@FXML private ImageView iBarcodePreview;
+	@FXML
+	private ImageView iBarcodePreview;
 	
 	//endregion
 	
@@ -71,17 +80,20 @@ public class Controller implements Initializable{
 	/**
 	 * Contructor w/o args
 	 */
-	public Controller(){
+	public Controller() {
 	
 	}
-
-	public void setData(){
+	
+	/**
+	 * Sets barcodetypes to combobox and sets events up
+	 */
+	public void setData() {
 		
 		barcodeTypes = FXCollections.observableArrayList(
 				new DummyBarcode(),
-		      // TODO: Add barcode types here (must implement iBarcode)
-		      new DummyWorking(),
-		      new DummyInvalid()
+				// TODO: Add barcode types here (must implement iBarcode)
+				new DummyWorking(),
+				new DummyInvalid()
 		                                                );
 		
 		iBarcodeComboBox.setItems(barcodeTypes);
@@ -95,12 +107,13 @@ public class Controller implements Initializable{
 		
 		iBarcodeComboBox.valueProperty().addListener(new ChangeListener<IBarcode>() {
 			@Override
-			public void changed(ObservableValue<? extends IBarcode> observable,
-			                    IBarcode oldValue, IBarcode newValue) {
+			public void changed(
+					ObservableValue<? extends IBarcode> observable,
+					IBarcode oldValue, IBarcode newValue) {
 				
 				iBarcode = newValue;
 				
-				if(newValue.toString().equals("<Select barcode type>")){
+				if(newValue.toString().equals("<Select barcode type>")) {
 					
 					generate.setDisable(true);
 				}
@@ -124,32 +137,31 @@ public class Controller implements Initializable{
 					
 					Image barcode = iBarcode.runGenerator();
 					iBarcodePreview.setImage(barcode);
-				}catch(Exception ex){
+				}
+				catch(Exception ex) {
 					
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setTitle("An exception has occurred");
-					alert.setHeaderText("An exception has occurred when attempted to generate a barcode of type: " + iBarcode);
+					alert.setHeaderText("An exception has occurred when attempted to generate" +
+							                    " a barcode of type: " + iBarcode);
 					alert.setContentText(ex.toString());
-					
+					alert.show();
 				}
 				
 			}
 		});
 		
-		
 	}
-	
-	
 	
 	/**
 	 * Called to initialize a controller after its root element has been
 	 * completely processed.
 	 *
 	 * @param location  The location used to resolve relative paths for the root
-	 *                    object, or
+	 *                  object, or
 	 *                  <tt>null</tt> if the location is not known.
 	 * @param resources The resources used to localize the root object, or
-	 *                    <tt>null</tt> if
+	 *                  <tt>null</tt> if
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
