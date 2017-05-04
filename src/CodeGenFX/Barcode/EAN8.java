@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,6 +22,9 @@ public class EAN8 implements IBarcode{
 	private boolean stict;
 	private boolean retard;
 	private boolean debug;
+	private Color foreground = Color.BLACK;
+	private Color background = Color.WHITE;
+	private Color debugMarker = Color.PURPLE;
 	
 	private TextField dataInput;
 	private ToggleGroup digitsTG;
@@ -31,6 +35,13 @@ public class EAN8 implements IBarcode{
 	private RadioButton ignore;
 	private CheckBox retardMode;
 	private CheckBox debugMode;
+	
+	private static float SCALE = 1.00f;
+	private static final float MINSCALE = 0.80f;
+	private static final float MAXSCALE = 2.00f;
+	private static final float WIDTH = 22.11f;
+	private static final float MARGIN = 4.62f;
+	private static final float HEIGTH = 21.31f;
 	
 	private static final String START_MARKER = "101";
 	private static final String END_MARKER = "101";
@@ -129,13 +140,16 @@ public class EAN8 implements IBarcode{
 		
 		String rawData = generateRaw(refData);
 		System.out.println("> Raw: " + rawData);
-	//endregion
-	
-	//region Render Barcode
-		// TODO: render barcode
 		
 	//endregion
-		return null;
+	
+	//region Render barcode
+		
+		Image barcode = renderBarcode(rawData);
+		
+	//endregion
+		
+		return barcode;
 	}
 	
 	//region Internal methods
@@ -275,6 +289,8 @@ public class EAN8 implements IBarcode{
 	private Image renderBarcode(String raw){
 		
 		
+		
+		
 		return null;
 	}
 	
@@ -347,6 +363,9 @@ public class EAN8 implements IBarcode{
 		
 		//endregion
 		
+		// TODO: Add color and scale properties
+		
+		//region Optionals
 		TitledPane optionals = new TitledPane();
 		optionals.setPadding(small);
 		optionals.setText("Optional Settigns");
@@ -361,6 +380,7 @@ public class EAN8 implements IBarcode{
 		optionals.setContent(optVBox);
 		
 		pane.getChildren().add(optionals);
+		//endregion
 		
 		return pane;
 	}
@@ -370,4 +390,56 @@ public class EAN8 implements IBarcode{
 		
 		return "EAN 8";
 	}
+	
+	//region size definition
+//
+//	private static final Map<Double, EANDim> dimensions = new TreeMap<Double, EANDim>(){{
+//
+//		put(0.80, new EANDim(17.69, 21.38, 17.05));
+//		put(0.85, new EANDim(18.79, 22.72, 18.11));
+//		put(0.90, new EANDim(19.90, 24.06, 19.18));
+//		put(0.95, new EANDim(21.00, 25.39, 20.24));
+//		put(1.00, new EANDim(22.11, 26.73, 21.31));
+//		put(1.05, new EANDim(23.22, 28.73, 22.38));
+//		put(1.10, new EANDim(24.32, 29.40, 23.44));
+//		put(1.15, new EANDim(25.43, 30.74, 24.51));
+//		put(1.20, new EANDim(26.53, 30.74, 25.57));
+//		put(1.25, new EANDim(27.64, 33.41, 26.64));
+//		put(1.30, new EANDim(00.00, 00.00, 00.00));
+//		put(1.35, new EANDim(00.00, 00.00, 00.00));
+//		put(1.40, new EANDim(00.00, 00.00, 00.00));
+//		put(1.45, new EANDim(00.00, 00.00, 00.00));
+//		put(1.50, new EANDim(00.00, 00.00, 00.00));
+//		put(1.55, new EANDim(00.00, 00.00, 00.00));
+//		put(1.65, new EANDim(00.00, 00.00, 00.00));
+//		put(1.70, new EANDim(00.00, 00.00, 00.00));
+//		put(1.75, new EANDim(00.00, 00.00, 00.00));
+//		put(1.80, new EANDim(00.00, 00.00, 00.00));
+//		put(1.85, new EANDim(00.00, 00.00, 00.00));
+//		put(1.90, new EANDim(00.00, 00.00, 00.00));
+//		put(1.95, new EANDim(00.00, 00.00, 00.00));
+//		put(2.00, new EANDim(00.00, 00.00, 00.00));
+//	}};
+//
+//	private static class EANDim {
+//
+//		public final double MARGIN;
+//		public final double HEIGTH;
+//		public final double WIDTH;
+//
+//		public EANDim(double margin, double width, double heigth, boolean isFinal){
+//
+//			this.MARGIN = margin;
+//			this.HEIGTH = heigth;
+//			this.WIDTH = width;
+//		}
+//
+//		public EANDim(double w, double wm, double h){
+//
+//			this.MARGIN = wm - w ;
+//			this.WIDTH = w;
+//			this.HEIGTH = h;
+//		}
+//	}
+//endregion
 }
