@@ -15,11 +15,11 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem fx:id="newFile" mnemonicParsing="false" text="New" />
+            <MenuItem fx:id="saveFile" mnemonicParsing="false" text="Save" />
+            <MenuItem fx:id="saveAsFile" mnemonicParsing="false" text="Save As…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem fx:id="quitFile" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
         <Menu disable="true" mnemonicParsing="false" text="Edit">
@@ -38,7 +38,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About CodeGenFX" />
+            <MenuItem fx:id="about" mnemonicParsing="false" text="About CodeGenFX" />
           </items>
         </Menu>
       </menus>
@@ -49,14 +49,14 @@
                <children>
                   <Accordion AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <panes>
-                      <TitledPane fx:id="barcodeType" animated="false" text="Barcode ">
+                      <TitledPane animated="false" text="Barcode ">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
                                     <VBox spacing="2.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <Label layoutX="19.0" layoutY="14.0" text="Barcode type:" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <ComboBox layoutX="9.0" layoutY="39.0" prefHeight="31.0" prefWidth="194.0" promptText="&lt; Select barcode type&gt;" visibleRowCount="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.5">
+                                          <ComboBox fx:id="iBarcodeComboBox" layoutX="9.0" layoutY="39.0" prefHeight="31.0" prefWidth="194.0" promptText="&lt; Select barcode type&gt;" visibleRowCount="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.5">
                                              <padding>
                                                 <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
                                              </padding>
@@ -75,7 +75,7 @@
                       </TitledPane>
                       <TitledPane animated="false" text="Configuration">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          <AnchorPane fx:id="configuration" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </content>
                       </TitledPane>
                       <TitledPane animated="false" text="Export Settings">
@@ -93,7 +93,7 @@
         </AnchorPane>
       <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
         <children>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ImageView fx:id="iBarcodePreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         </children>
       </AnchorPane>
       </items>

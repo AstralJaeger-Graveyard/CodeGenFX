@@ -1,5 +1,8 @@
 package CodeGenFX;
 
+import CodeGenFX.Barcode.DummyBarcode;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
@@ -8,8 +11,10 @@ import javafx.scene.layout.AnchorPane;
 
 public class Controller {
 	
+	private ObservableList<IBarcode> barcodeTypes;
 	
 	
+	//region GUI Objects
 	
 	// MenuBar
 	
@@ -41,12 +46,20 @@ public class Controller {
 	// ImageView - Barcode PreView
 	@FXML private ImageView iBarcodePreview;
 	
+	//endregion
+	
 	
 	/**
 	 * Contructor w/o args
 	 */
 	public Controller(){
 	
+		barcodeTypes = FXCollections.observableArrayList(
+		      new DummyBarcode()
+		      // TODO: add IBarcode-classes here
+		      
+		                                                );
+		
 	}
 	
 	/**
@@ -55,7 +68,8 @@ public class Controller {
 	@FXML
 	public void inizialise(){
 	
-	
+		iBarcodeComboBox.setItems(barcodeTypes);
+		
 	}
 	
 	
