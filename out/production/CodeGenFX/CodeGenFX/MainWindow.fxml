@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
 <?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CodeGenFX.Controller">
+<VBox minHeight="720.0" minWidth="1080.0" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CodeGenFX.Controller">
+    
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -56,7 +74,7 @@
                                     <VBox spacing="2.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <Label layoutX="19.0" layoutY="14.0" text="Barcode type:" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <ComboBox fx:id="iBarcodeComboBox" layoutX="9.0" layoutY="39.0" prefHeight="31.0" prefWidth="194.0" promptText="&lt; Select barcode type&gt;" visibleRowCount="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.5">
+                                          <ComboBox fx:id="iBarcodeComboBox" layoutX="9.0" layoutY="39.0" prefHeight="31.0" prefWidth="268.0" visibleRowCount="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.5">
                                              <padding>
                                                 <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
                                              </padding>
@@ -64,6 +82,11 @@
                                                 <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
                                              </VBox.margin>
                                           </ComboBox>
+                                          <Button fx:id="generate" mnemonicParsing="false" prefHeight="25.0" prefWidth="272.0" text="Generate">
+                                             <VBox.margin>
+                                                <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
+                                             </VBox.margin>
+                                          </Button>
                                        </children>
                                        <padding>
                                           <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
@@ -94,9 +117,7 @@
       <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
         <children>
                   <ImageView fx:id="iBarcodePreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" smooth="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <image>
-                        <Image url="http://docs.oracle.com/javafx/javafx/images/javafx-documentation.png" />
-                     </image></ImageView>
+                     </ImageView>
         </children>
       </AnchorPane>
       </items>

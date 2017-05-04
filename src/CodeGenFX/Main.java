@@ -9,17 +9,21 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	public static Controller ctrl;
+	
     @Override
     public void start(Stage primaryStage) throws Exception{
      
     	try {
-	      FXMLLoader sceneLoader = new FXMLLoader();
+	      FXMLLoader loader = new FXMLLoader(Main.class.getResource("/CodeGenFX/MainWindow.fxml"));//getClass().getResource("MainWindow.fxml"));
+	      Parent root = loader.load();
+	      ctrl = loader.getController();
 	      
-	      Parent root = sceneLoader.load(getClass().getResource("MainWindow.fxml"));
-	  	  
 	      primaryStage.setTitle("CodeGen FX");
-	      primaryStage.setScene(new Scene(root, 300, 275));
+	      primaryStage.setScene(new Scene(root, 1080, 720));
 	      primaryStage.show();
+	  
+	      ctrl.setData();
 	      
       }catch(Exception ex){
 	  
@@ -35,6 +39,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         
-        launch(args);
+        launch("void");
     }
 }

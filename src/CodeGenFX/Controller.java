@@ -1,18 +1,34 @@
 package CodeGenFX;
 
 import CodeGenFX.Barcode.DummyBarcode;
+import CodeGenFX.Barcode.Dummy;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
-public class Controller {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class Controller implements Initializable{
+	
+	
+	//region Private fields
 	
 	private ObservableList<IBarcode> barcodeTypes;
+	private IBarcode iBarcode;
 	
+	//endregion
 	
 	//region GUI Objects
 	
@@ -36,6 +52,7 @@ public class Controller {
 	// Accordion
 	// TitledPane - Barcode
 	@FXML	private ComboBox<IBarcode> iBarcodeComboBox;
+	@FXML private Button generate;
 	
 	// TitledPane - Configuration
 	@FXML private AnchorPane configuration;
@@ -54,30 +71,59 @@ public class Controller {
 	 */
 	public Controller(){
 	
+	}
+
+	public void setData(){
+		
 		barcodeTypes = FXCollections.observableArrayList(
-		      new DummyBarcode()
-		      // TODO: add IBarcode-classes here
-		      
+				new DummyBarcode(),
+		      new Dummy()
 		                                                );
 		
-		// iBarcodePreview.setImage(new DummyBarcode().runGenerator());
+		iBarcodeComboBox.setItems(barcodeTypes);
+		iBarcodeComboBox.getSelectionModel().select(0);
+		
+		iBarcode = iBarcodeComboBox.getValue();
+		
+		iBarcodeComboBox.valueProperty().addListener(new ChangeListener<IBarcode>() {
+			@Override
+			public void changed(ObservableValue<? extends IBarcode> observable,
+			                    IBarcode oldValue, IBarcode newValue) {
+				
+				iBarcode = newValue;
+				
+				configuration.getChildren().clear();
+				configuration.getChildren().add(iBarcode.mandatoryProperties());
+				
+				System.out.println("Current iBarcode: " + newValue);
+			}
+		});
+		
+		generate.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				
+				iBarcodePreview.setImage(iBarcode.runGenerator());
+			}
+		});
+		
 		
 	}
+	
+	
 	
 	/**
-	 * Inizialise fct for JavaFX Controller class
+	 * Called to initialize a controller after its root element has been
+	 * completely processed.
+	 *
+	 * @param location  The location used to resolve relative paths for the root
+	 *                    object, or
+	 *                  <tt>null</tt> if the location is not known.
+	 * @param resources The resources used to localize the root object, or
+	 *                    <tt>null</tt> if
 	 */
-	@FXML
-	public void inizialise(){
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 	
-		iBarcodePreview = new ImageView(new DummyBarcode().runGenerator());
-		
-		iBarcodeComboBox.setItems(barcodeTypes);
-		
-		
 	}
-	
-	
-	
-	
 }
