@@ -126,24 +126,9 @@ public class EAN8 implements IBarcode{
 	//endregion
 	
 	//region Generate raw data string
-		StringBuilder rawData = new StringBuilder();
-		rawData.append(START_MARKER);
 		
-		for(int i = 0; i < refData.length()/2; i++){
-		
-			rawData.append(L_CODE.get(Integer.parseInt("" + refData.charAt(i))));
-		}
-		
-		rawData.append(SEPARATOR);
-		
-		for(int i = refData.length()/2; i < refData.length(); i++){
-			
-			rawData.append(R_CODE.get(Integer.parseInt("" + refData.charAt(i))));
-		}
-		
-		rawData.append(END_MARKER);
-		
-		System.out.println("> Raw: " + rawData.toString());
+		String rawData = generateRaw(refData);
+		System.out.println("> Raw: " + rawData);
 	//endregion
 	
 	//region Render Barcode
@@ -263,8 +248,23 @@ public class EAN8 implements IBarcode{
 	 */
 	private String generateRaw(String data){
 		
+		StringBuilder rawData = new StringBuilder();
+		rawData.append(START_MARKER);
 		
-		return "";
+		for(int i = 0; i < data.length()/2; i++){
+			
+			rawData.append(L_CODE.get(Integer.parseInt("" + data.charAt(i))));
+		}
+		
+		rawData.append(SEPARATOR);
+		
+		for(int i = data.length()/2; i < data.length(); i++){
+			
+			rawData.append(R_CODE.get(Integer.parseInt("" + data.charAt(i))));
+		}
+		
+		rawData.append(END_MARKER);
+		return rawData.toString();
 	}
 	
 	/**
