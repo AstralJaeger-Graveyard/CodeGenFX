@@ -3,6 +3,7 @@ package CodeGenFX;
 import CodeGenFX.Barcode.DummyBarcode;
 import CodeGenFX.Barcode.DummyInvalid;
 import CodeGenFX.Barcode.DummyWorking;
+import CodeGenFX.Barcode.EAN8;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -92,8 +93,9 @@ public class Controller implements Initializable {
 		barcodeTypes = FXCollections.observableArrayList(
 				new DummyBarcode(),
 				// TODO: Add barcode types here (must implement iBarcode)
-				new DummyWorking(),
-				new DummyInvalid()
+//				new DummyWorking(),
+//				new DummyInvalid(),
+		      new EAN8()
 		                                                );
 		
 		iBarcodeComboBox.setItems(barcodeTypes);
