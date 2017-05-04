@@ -8,6 +8,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * Generates a not so common EAN8 barcode
  */
@@ -28,6 +31,38 @@ public class EAN8 implements IBarcode{
 	private RadioButton ignore;
 	private CheckBox retardMode;
 	private CheckBox debugMode;
+	
+	private static final String START_MARKER = "101";
+	private static final String END_MARKER = "101";
+	private static final String SEPARATOR = "01010";
+	
+	private static final Map<Integer, String> L_CODE = new TreeMap<Integer, String>(){{
+		
+		put(0, "000000");
+		put(1, "001011");
+		put(2, "001101");
+		put(3, "010011");
+		put(4, "010011");
+		put(5, "011001");
+		put(6, "011100");
+		put(7, "010101");
+		put(8, "010110");
+		put(9, "011010");
+	}};
+	
+	private static final Map<Integer, String> R_CODE = new TreeMap<Integer, String>(){{
+		
+		put(0, "1110010");
+		put(1, "1100110");
+		put(2, "1101100");
+		put(3, "1000010");
+		put(4, "1011100");
+		put(5, "1001110");
+		put(6, "1010000");
+		put(7, "1000100");
+		put(8, "1001000");
+		put(9, "1110100");
+	}};
 	
 	/**
 	 * runs the current barcode generator
@@ -78,21 +113,43 @@ public class EAN8 implements IBarcode{
 		}
 	}
 	//endregion
-		
-		// TODO: if applicable calculate checksum
-		
-		String refinedData = data.substring(0, digits);
+	
+	//region Calculate checksum if applicable
+		String refData = data.substring(0, digits);
 		
 		if(digits != 8){
 			
-			refinedData += checksum(refinedData);
+			refData += checksum(refData);
 		}
 		
+		System.out.println("> Ref. data: " + refData);
+	//endregion
+	
+	//region Generate raw data string
+		StringBuilder rawData = new StringBuilder();
+		rawData.append(START_MARKER);
 		
-		// TODO: generate raw data string
+		for(int i = 0; i < refData.length()/2; i++){
 		
-		// TODO: redner barcode
+			rawData.append(L_CODE.get(Integer.parseInt("" + refData.charAt(i))));
+		}
 		
+		rawData.append(SEPARATOR);
+		
+		for(int i = refData.length()/2; i < refData.length(); i++){
+			
+			rawData.append(R_CODE.get(Integer.parseInt("" + refData.charAt(i))));
+		}
+		
+		rawData.append(END_MARKER);
+		
+		System.out.println("> Raw: " + rawData.toString());
+	//endregion
+	
+	//region Render Barcode
+		// TODO: render barcode
+		
+	//endregion
 		return null;
 	}
 	
