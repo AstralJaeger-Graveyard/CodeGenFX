@@ -1,14 +1,12 @@
 package CodeGenFX.Barcode;
 
 import CodeGenFX.IBarcode;
-import com.sun.javafx.font.freetype.HBGlyphLayout;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
  * Generates a not so common EAN8 barcode
@@ -42,10 +40,54 @@ public class EAN8 implements IBarcode{
 		collectSettings();
 		resetSettings();
 		
-		// TODO: Check if data is valid
-		isValid(data);
+		System.out.println("Starting EAN 8 Generator");
+		System.out.println("Information collected: ");
+		System.out.println("> Data: " + data);
+		System.out.println("> Strict: " + stict);
+		System.out.println("> Digits: " + digits);
+		
+	//region Check if data is valid
+		
+		int validityLevel = isValid(data);
+		System.out.println("> Valid: " + validityLevel);
+		
+		if(validityLevel != 0){
+			
+			String msg = "";
+			
+			switch(validityLevel) {
+				case 1:
+					msg = "Barcode length is invalid! Length needs to be " + digits + " digits";
+					break;
+					
+				case 2:
+					msg = "Barcode length need to be at lest " + digits + "digits";
+					break;
+					
+				case 3:
+					msg = "Barcode contains invalid character. EAN 8 may only contain Numbers";
+					break;
+					
+				default:
+					break;
+			}
+		
+		if(! msg.equals("")) {
+			
+			throw new BarcodeException(msg);
+		}
+	}
+	//endregion
 		
 		// TODO: if applicable calculate checksum
+		
+		String refinedData = data.substring(0, digits);
+		
+		if(digits != 8){
+			
+			refinedData += checksum(refinedData);
+		}
+		
 		
 		// TODO: generate raw data string
 		
@@ -102,11 +144,33 @@ public class EAN8 implements IBarcode{
 	/**
 	 * Checks weather the given data is valid or invalid
 	 * @param data to check
-	 * @return valid
+	 * @return
+	 * 0 if valid,
+	 * 1 if lenght invalid in strict mode,
+	 * 2 if length invalid in ignore mode,
+	 * 3 if data contains non numerical character
 	 */
-	private boolean isValid(String data){
+	private int isValid(String data){
 		
-		return false;
+		if(stict && (data.length() != digits)){
+			
+			return 1;
+		}
+		
+		if((!stict) && (data.length() < digits)){
+			
+			return 2;
+		}
+		
+		for(char c : data.toCharArray()){
+			
+			if(!Character.isDigit(c)){
+				
+				return 3;
+			}
+		}
+		
+		return 0;
 	}
 	
 	/**
@@ -116,8 +180,23 @@ public class EAN8 implements IBarcode{
 	 */
 	private int checksum(String data){
 		
+		StringBuilder reversed = new StringBuilder();
+		reversed.append(data);
+		reversed.reverse();
+		data = reversed.toString();
 		
-		return 0;
+		int mul = 3;
+		int sum = 0;
+		
+		for(int i = 0; i < data.length(); i++){
+			
+			sum += Integer.parseInt("" + data.charAt(i)) * mul;
+			mul = (mul == 3) ? 1 : 3;
+		}
+		
+		int nextMulOf10 = (sum + 9) - ((sum + 9) % 10);
+		
+		return nextMulOf10 - sum;
 	}
 	
 	/**
