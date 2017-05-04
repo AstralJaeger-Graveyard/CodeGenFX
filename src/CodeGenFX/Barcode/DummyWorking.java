@@ -4,6 +4,7 @@ import CodeGenFX.Controller;
 import CodeGenFX.IBarcode;
 import CodeGenFX.Main;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -15,15 +16,23 @@ import java.beans.EventHandler;
 /**
  * A dummy barcode implementation
  */
-public class Dummy implements IBarcode {
+public class DummyWorking implements IBarcode {
+	
+	private static String dummyBarcode = "https://www.wpclipart.com/signs_symbol/business/barcodes/barcode_UPC-A.png";
 	/**
 	 * runs the current barcode generator
 	 * @return generated barcode as Image
 	 */
 	@Override
-	public Image runGenerator() {
+	public Image runGenerator() throws BarcodeException{
 		
-		return new Image("https://www.wpclipart.com/signs_symbol/business/barcodes/barcode_UPC-A.png");
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Warning!");
+		alert.setHeaderText("This Barcode type will always generate the same barcode!");
+		alert.setContentText("This barcode type was only implemented to test functionality");
+		alert.show();
+		
+		return new Image(dummyBarcode);
 	}
 	
 	/**
@@ -42,7 +51,7 @@ public class Dummy implements IBarcode {
 	@Override
 	public String toString(){
 		
-		return "Dummy";
+		return "Dummy barcode";
 	}
 	// TODO: implement Interface
 }

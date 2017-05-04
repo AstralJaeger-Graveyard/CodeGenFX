@@ -1,25 +1,25 @@
 package CodeGenFX.Barcode;
 
 import CodeGenFX.IBarcode;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * A dummy barcode implementation
  */
-public class DummyBarcode implements IBarcode {
+public class DummyInvalid implements IBarcode {
 	
 	/**
 	 * runs the current barcode generator
 	 * @return generated barcode as Image
 	 */
 	@Override
-	public Image runGenerator() {
+	public Image runGenerator() throws BarcodeException{
 		
-		return new Image("http://docs.oracle.com/javafx/" +
-				               "javafx/images/javafx-documentation.png");
+		throw new BarcodeException("This barcode-type will always throw this exception");
 	}
 	
 	/**
@@ -28,15 +28,17 @@ public class DummyBarcode implements IBarcode {
 	 * (examples in EAN13 & EAN8 class)
 	 */
 	@Override
-	public AnchorPane mandatoryProperties() {
+	public Node mandatoryProperties() {
 		
-		return new AnchorPane(new Label("Select a barcode type"));
+		VBox pane = new VBox(new Label("Select valid barcode type"));
+		
+		return pane;
 	}
 	
 	@Override
 	public String toString(){
 		
-		return "<Select barcode type>";
+		return "Dummy barcode - INVALID";
 	}
 	// TODO: implement Interface
 }

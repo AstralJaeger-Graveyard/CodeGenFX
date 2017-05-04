@@ -1,7 +1,8 @@
 package CodeGenFX;
 
 import CodeGenFX.Barcode.DummyBarcode;
-import CodeGenFX.Barcode.Dummy;
+import CodeGenFX.Barcode.DummyInvalid;
+import CodeGenFX.Barcode.DummyWorking;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -10,12 +11,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -77,13 +79,19 @@ public class Controller implements Initializable{
 		
 		barcodeTypes = FXCollections.observableArrayList(
 				new DummyBarcode(),
-		      new Dummy()
+		      // TODO: Add barcode types here (must implement iBarcode)
+		      new DummyWorking(),
+		      new DummyInvalid()
 		                                                );
 		
 		iBarcodeComboBox.setItems(barcodeTypes);
 		iBarcodeComboBox.getSelectionModel().select(0);
 		
+		// Prepair for first time
 		iBarcode = iBarcodeComboBox.getValue();
+		configuration.getChildren().clear();
+		configuration.getChildren().add(iBarcode.mandatoryProperties());
+		generate.setDisable(true);
 		
 		iBarcodeComboBox.valueProperty().addListener(new ChangeListener<IBarcode>() {
 			@Override
@@ -91,6 +99,15 @@ public class Controller implements Initializable{
 			                    IBarcode oldValue, IBarcode newValue) {
 				
 				iBarcode = newValue;
+				
+				if(newValue.toString().equals("<Select barcode type>")){
+					
+					generate.setDisable(true);
+				}
+				else {
+					
+					generate.setDisable(false);
+				}
 				
 				configuration.getChildren().clear();
 				configuration.getChildren().add(iBarcode.mandatoryProperties());
@@ -103,7 +120,19 @@ public class Controller implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				
-				iBarcodePreview.setImage(iBarcode.runGenerator());
+				try {
+					
+					Image barcode = iBarcode.runGenerator();
+					iBarcodePreview.setImage(barcode);
+				}catch(Exception ex){
+					
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setTitle("An exception has occurred");
+					alert.setHeaderText("An exception has occurred when attempted to generate a barcode of type: " + iBarcode);
+					alert.setContentText(ex.toString());
+					
+				}
+				
 			}
 		});
 		

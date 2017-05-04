@@ -1,5 +1,6 @@
 package CodeGenFX;
 
+import CodeGenFX.Barcode.BarcodeException;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -13,7 +14,7 @@ public interface IBarcode {
 	 * runs the current barcode generator
 	 * @return generated barcode as Image
 	 */
-	public Image runGenerator();
+	public Image runGenerator() throws BarcodeException;
 	
 	/**
 	 * gets the properties mandatory to be implemented
