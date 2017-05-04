@@ -60,6 +60,8 @@ public class Controller {
 		      
 		                                                );
 		
+		// iBarcodePreview.setImage(new DummyBarcode().runGenerator());
+		
 	}
 	
 	/**
@@ -68,7 +70,10 @@ public class Controller {
 	@FXML
 	public void inizialise(){
 	
+		iBarcodePreview = new ImageView(new DummyBarcode().runGenerator());
+		
 		iBarcodeComboBox.setItems(barcodeTypes);
+		
 		
 	}
 	
