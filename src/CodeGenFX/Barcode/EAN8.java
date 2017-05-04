@@ -16,12 +16,20 @@ import javafx.scene.layout.*;
 public class EAN8 implements IBarcode{
 	
 	private String data;
-	
 	private int digits;
+	private boolean stict;
+	private boolean retard;
+	private boolean debug;
 	
-	private boolean retardMode;
-	
-	private boolean stictMode;
+	private TextField dataInput;
+	private ToggleGroup digitsTG;
+	private RadioButton digits7;
+	private RadioButton digits8;
+	private ToggleGroup modeTG;
+	private RadioButton strict;
+	private RadioButton ignore;
+	private CheckBox retardMode;
+	private CheckBox debugMode;
 	
 	/**
 	 * runs the current barcode generator
@@ -31,7 +39,11 @@ public class EAN8 implements IBarcode{
 	@Override
 	public Image runGenerator() throws BarcodeException {
 		
+		collectSettings();
+		resetSettings();
+		
 		// TODO: Check if data is valid
+		isValid(data);
 		
 		// TODO: if applicable calculate checksum
 		
@@ -49,7 +61,34 @@ public class EAN8 implements IBarcode{
 	 */
 	private void collectSettings(){
 	
-	
+		data = dataInput.getText();
+		
+		//region Digit count
+		digits = -1;
+		if(digitsTG.getSelectedToggle().equals(digits7)){
+			
+			digits = 7;
+		}
+		else if(digitsTG.getSelectedToggle().equals(digits8)){
+			
+			digits = 8;
+		}
+		//endregion
+		
+		//region Mode Selection
+		if(modeTG.getSelectedToggle().equals(strict)){
+			
+			stict = true;
+		}
+		else if(modeTG.getSelectedToggle().equals(ignore)){
+			
+			stict = false;
+		}
+		//endregion
+		
+		retard = retardMode.isSelected();
+		debug = debugMode.isSelected();
+		
 	}
 	
 	/**
@@ -57,6 +96,7 @@ public class EAN8 implements IBarcode{
 	 */
 	private void resetSettings(){
 	
+		dataInput.setText("");
 	}
 	
 	/**
@@ -119,8 +159,8 @@ public class EAN8 implements IBarcode{
 		pane.setPadding(new Insets( 10, 10, 10, 10));
 		pane.getChildren().add(new Label("Data"));
 		
-		TextField data = new TextField();
-		pane.getChildren().add(data);
+		dataInput = new TextField();
+		pane.getChildren().add(dataInput);
 		
 		//region Digit & Mode settings
 		
@@ -131,15 +171,15 @@ public class EAN8 implements IBarcode{
 		digitPane.setText("Digts");
 		digitPane.setPadding(small);
 		
-		ToggleGroup digits = new ToggleGroup();
-		RadioButton calcCheck_7DG = new RadioButton("7 Digits");
-		RadioButton calcCheck_8DG = new RadioButton("8 Digits");
-		calcCheck_7DG.setToggleGroup(digits);
-		calcCheck_8DG.setToggleGroup(digits);
+		digitsTG = new ToggleGroup();
+		digits7 = new RadioButton("7 Digits");
+		digits8 = new RadioButton("8 Digits");
+		digits7.setToggleGroup(digitsTG);
+		digits8.setToggleGroup(digitsTG);
 		
-		calcCheck_7DG.setSelected(true);
+		digits7.setSelected(true);
 		
-		VBox digitVBox = new VBox(calcCheck_7DG, calcCheck_8DG);
+		VBox digitVBox = new VBox(digits7, digits8);
 		digitVBox.setPadding(small);
 		digitPane.setContent(digitVBox);
 		//endregion
@@ -150,11 +190,11 @@ public class EAN8 implements IBarcode{
 		modePane.setText("Digts");
 		modePane.setPadding(small);
 		
-		ToggleGroup mode = new ToggleGroup();
-		RadioButton strict = new RadioButton("Strict mode");
-		RadioButton ignore = new RadioButton("Ignore mode");
-		strict.setToggleGroup(mode);
-		ignore.setToggleGroup(mode);
+		modeTG = new ToggleGroup();
+		strict = new RadioButton("Strict mode");
+		ignore = new RadioButton("Ignore mode");
+		strict.setToggleGroup(modeTG);
+		ignore.setToggleGroup(modeTG);
 		
 		ignore.setSelected(true);
 		
@@ -178,8 +218,8 @@ public class EAN8 implements IBarcode{
 		
 		VBox optVBox = new VBox();
 		
-		CheckBox retardMode = new CheckBox("Strike trough");
-		CheckBox debugMode = new CheckBox("Debug mode");
+		retardMode = new CheckBox("Strike trough");
+		debugMode = new CheckBox("Debug mode");
 		optVBox.setPadding(small);
 		optVBox.getChildren().addAll(retardMode, debugMode);
 		optionals.setContent(optVBox);
