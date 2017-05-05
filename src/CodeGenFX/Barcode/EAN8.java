@@ -3,22 +3,31 @@ package CodeGenFX.Barcode;
 import CodeGenFX.IBarcode;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Generates a not so common EAN8 barcode
@@ -54,7 +63,9 @@ public class EAN8 implements IBarcode{
 	private static final float WIDTH = 22.11f; // for scale 1.0 in mm
 	private static final float MARGIN = 4.62f; // for scale 1.0 in mm
 	private static final float HEIGTH = 21.31f; // for scale 1.0 in mm
-	private static final float DPI = 300;
+	private static final float DPMM = 25;
+	private static final float INCHTOMM = 25.4f;
+	private static final float MMTOINCH = 0.393701f;
 	
 	private static final String START_MARKER = "101";
 	private static final String END_MARKER = "101";
@@ -62,16 +73,16 @@ public class EAN8 implements IBarcode{
 	
 	private static final Map<Integer, String> L_CODE = new TreeMap<Integer, String>(){{
 		
-		put(0, "000000");
-		put(1, "001011");
-		put(2, "001101");
-		put(3, "010011");
-		put(4, "010011");
-		put(5, "011001");
-		put(6, "011100");
-		put(7, "010101");
-		put(8, "010110");
-		put(9, "011010");
+		put(0, "0001101");
+		put(1, "0011001");
+		put(2, "0010011");
+		put(3, "0111101");
+		put(4, "0100011");
+		put(5, "0110001");
+		put(6, "0101111");
+		put(7, "0111011");
+		put(8, "0110111");
+		put(9, "0001011");
 	}};
 	
 	private static final Map<Integer, String> R_CODE = new TreeMap<Integer, String>(){{
@@ -99,16 +110,23 @@ public class EAN8 implements IBarcode{
 		collectSettings();
 		resetSettings();
 		
-		System.out.println("Starting EAN 8 Generator");
-		System.out.println("Information collected: ");
-		System.out.println("> Data: " + data);
-		System.out.println("> Strict: " + stict);
-		System.out.println("> Digits: " + digits);
+		if(debug) {
+	
+			System.out.println("Starting EAN 8 Generator");
+			System.out.println("Information collected: ");
+			System.out.println("> Data: " + data);
+			System.out.println("> Strict: " + stict);
+			System.out.println("> Digits: " + digits);
+		}
 		
 	//region Check if data is valid
 		
 		int validityLevel = isValid(data);
-		System.out.println("> Valid: " + validityLevel);
+		
+		if(debug) {
+		
+			System.out.println("> Valid: " + validityLevel);
+		}
 		
 		if(validityLevel != 0){
 			
@@ -146,14 +164,20 @@ public class EAN8 implements IBarcode{
 			refData += checksum(refData);
 		}
 		
-		System.out.println("> Ref. data: " + refData);
+		if(debug) {
+			
+			System.out.println("> Ref. data: " + refData);
+		}
 	//endregion
 	
 	//region Generate raw data string
 		
 		String rawData = generateRaw(refData);
-		System.out.println("> Raw: " + rawData);
 		
+		if(debug) {
+			
+			System.out.println("> Raw: " + rawData);
+		}
 	//endregion
 	
 	//region Render barcode
@@ -314,10 +338,101 @@ public class EAN8 implements IBarcode{
 	 */
 	private Image renderBarcode(String raw){
 		
+		int width = Math.round(WIDTH * SCALE * DPMM) ;
+		int margin = Math.round(MARGIN * SCALE * DPMM);
+		int heigth = Math.round(HEIGTH * SCALE * DPMM);
+		
+		java.awt.Color debugPen = new java.awt.Color((float)debugMarker.getRed(),
+		                                             (float)debugMarker.getGreen(),
+		                                             (float)debugMarker.getBlue(),
+		                                             (float)debugMarker.getOpacity());
+		
+		java.awt.Color forePen = new java.awt.Color((float)foreground.getRed(),
+		                                            (float)foreground.getGreen(),
+		                                            (float)foreground.getBlue(),
+		                                            (float)foreground.getOpacity());
+		
+		java.awt.Color backPen = new java.awt.Color((float)background.getRed(),
+		                                            (float)background.getGreen(),
+		                                            (float)background.getBlue(),
+		                                            (float)background.getOpacity());
+		
+		float bit = (float)Math.ceil(width/(float)raw.length());
+		
+		while(bit * raw.length() > width){
+			
+			bit -= 0.005;
+		}
+		
+		if(debug){
+			
+			System.out.println("Raw length: " + raw.length());
+			System.out.println("Width: " + width);
+			System.out.println("Margin: " + margin);
+			System.out.println("Heigth: " + heigth);
+			System.out.println("Bit width: " + bit);
+			System.out.println("Bit sum: " + bit * raw.length());
+		}
+		
+		int l = raw.length() - 1;
+		int[] specialIdx = new int[]{0, 2, l / 2 - 1, l / 2 + 1, l - 2, l};
+		
+		BufferedImage img = new BufferedImage(width + 2 * margin, heigth + 2 * margin, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = img.createGraphics();
+		
+		if(debug) {
+			
+			g.setColor(debugPen);
+			g.drawRect(0,0,2 * margin + width - 1, 2 * margin + heigth - 1);
+			g.drawLine(margin, 0, margin, heigth + 2 * margin);
+			g.drawLine(width + margin, 0, width + margin, heigth + 2 * margin);
+			g.drawLine(0, margin, width + 2 * margin, margin);
+			g.drawLine(0, heigth + margin, width + 2 * margin, heigth + margin);
+		}
+		
+		int startY = margin;
+		int endY = 0;
+		
+		for(int i = 0; i < raw.length(); i++){
+			
+			char c = raw.charAt(i);
+			
+			if(c == '1') {
+				
+				final int cmp = i;
+				endY = (IntStream
+						.of(specialIdx)
+						.anyMatch(j -> j == cmp)) ? (heigth + margin / 2) : (heigth);
+				
+				g.setColor(forePen);
+				for(int x = 0; x <= bit; x++){
+					
+					
+					g.drawLine((int)(margin + i * bit + x),
+					           startY,
+					           (int)(margin + i * bit + x),
+					           endY + margin);
+				}
+				
+				if(debug) {
+					
+					g.setColor(debugPen);
+					g.drawRect((int)(margin + i * bit), startY, (int)bit, endY);
+					g.drawLine((int)(margin + i * bit), startY, (int)(margin + i * bit + bit), endY);
+					g.drawLine((int)(margin + i * bit + bit), startY, (int)(margin + i * bit), endY);
+				}
+			}
+			
+		}
 		
 		
 		
-		return null;
+		
+		g.dispose();
+		
+		WritableImage barcode = new WritableImage(width + 2 * margin, heigth + 2 * margin);
+		SwingFXUtils.toFXImage(img, barcode);
+		return barcode;
 	}
 	
 	//endregion

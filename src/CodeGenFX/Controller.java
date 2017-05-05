@@ -74,6 +74,8 @@ public class Controller implements Initializable {
 	
 	// ImageView - Barcode PreView
 	@FXML
+	private AnchorPane iBarcodePreviewContainer;
+	@FXML
 	private ImageView iBarcodePreview;
 	
 	//endregion
@@ -155,6 +157,9 @@ public class Controller implements Initializable {
 				
 			}
 		});
+		
+		iBarcodePreview.fitHeightProperty().bind(iBarcodePreviewContainer.heightProperty());
+		iBarcodePreview.fitWidthProperty().bind(iBarcodePreviewContainer.heightProperty());
 		
 	}
 	
