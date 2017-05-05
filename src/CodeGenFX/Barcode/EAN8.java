@@ -41,17 +41,20 @@ public class EAN8 implements IBarcode{
 	private ToggleGroup modeTG;
 	private RadioButton strict;
 	private RadioButton ignore;
-	private CheckBox retardMode;
-	private CheckBox debugMode;
 	private ColorPicker foregroundColor;
 	private ColorPicker backgroundColor;
+	private CheckBox retardMode;
+	private CheckBox debugMode;
+	private ComboBox<Double> scaleSelector;
 	
-	private static float SCALE = 1.00f;
+	// Constants and measurements
+	private float SCALE = 1.00f;
 	private static final float MINSCALE = 0.80f;
 	private static final float MAXSCALE = 2.00f;
-	private static final float WIDTH = 22.11f;
-	private static final float MARGIN = 4.62f;
-	private static final float HEIGTH = 21.31f;
+	private static final float WIDTH = 22.11f; // for scale 1.0 in mm
+	private static final float MARGIN = 4.62f; // for scale 1.0 in mm
+	private static final float HEIGTH = 21.31f; // for scale 1.0 in mm
+	private static final float DPI = 300;
 	
 	private static final String START_MARKER = "101";
 	private static final String END_MARKER = "101";
@@ -192,6 +195,19 @@ public class EAN8 implements IBarcode{
 			
 			stict = false;
 		}
+		//endregion
+		
+		//region Size definition
+		
+		SCALE = Float.parseFloat("" + scaleSelector.getValue());
+		
+		//endregion
+		
+		//region Color
+		
+		foreground = foregroundColor.getValue();
+		background = backgroundColor.getValue();
+		
 		//endregion
 		
 		retard = retardMode.isSelected();
@@ -401,7 +417,7 @@ public class EAN8 implements IBarcode{
 		
 		sizeGrid.add(new Label("Scale: "), 0, 0);
 		
-		ComboBox<Double> scaleSelector = new ComboBox<>(FXCollections.observableList(scales));
+		scaleSelector = new ComboBox<>(FXCollections.observableList(scales));
 		scaleSelector.setValue(1.00d);
 		
 		sizeGrid.add(scaleSelector, 1, 0);
