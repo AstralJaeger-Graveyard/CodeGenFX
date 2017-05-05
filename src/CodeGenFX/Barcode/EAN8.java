@@ -1,14 +1,22 @@
 package CodeGenFX.Barcode;
 
 import CodeGenFX.IBarcode;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,6 +43,8 @@ public class EAN8 implements IBarcode{
 	private RadioButton ignore;
 	private CheckBox retardMode;
 	private CheckBox debugMode;
+	private ColorPicker foregroundColor;
+	private ColorPicker backgroundColor;
 	
 	private static float SCALE = 1.00f;
 	private static final float MINSCALE = 0.80f;
@@ -314,7 +324,9 @@ public class EAN8 implements IBarcode{
 		dataInput = new TextField();
 		pane.getChildren().add(dataInput);
 		
-		//region Digit & Mode settings
+		//region Digit, Mode, Scale & Color settings
+		
+		GridPane settingsGrid = new GridPane();
 		
 		//region Digit settings
 		
@@ -323,47 +335,132 @@ public class EAN8 implements IBarcode{
 		digitPane.setText("Digts");
 		digitPane.setPadding(small);
 		
-		digitsTG = new ToggleGroup();
-		digits7 = new RadioButton("7 Digits");
-		digits8 = new RadioButton("8 Digits");
-		digits7.setToggleGroup(digitsTG);
-		digits8.setToggleGroup(digitsTG);
+		GridPane digitGrid = new GridPane();
+		digitGrid.setHgap(5);
+		digitGrid.setVgap(5);
 		
+		digits7 = new RadioButton("7 Digits");
+		digitGrid.add(digits7, 0, 0);
+		
+		digits8 = new RadioButton("8 Digits");
+		digitGrid.add(digits8, 0, 1);
+		
+		digitsTG = new ToggleGroup();
+		digitsTG.getToggles().addAll(digits7, digits8);
 		digits7.setSelected(true);
 		
-		VBox digitVBox = new VBox(digits7, digits8);
-		digitVBox.setPadding(small);
-		digitPane.setContent(digitVBox);
+		digitPane.setContent(digitGrid);
+		settingsGrid.add(digitPane, 0, 0);
 		//endregion
 		
 		//region Mode settings
+		
 		TitledPane modePane = new TitledPane();
 		modePane.setCollapsible(false);
 		modePane.setText("Digts");
 		modePane.setPadding(small);
 		
+		GridPane modeGrid = new GridPane();
+		modeGrid.setHgap(5);
+		modeGrid.setVgap(5);
+		
+		ignore = new RadioButton("Ignore");
+		modeGrid.add(ignore, 0, 0);
+		
+		strict = new RadioButton("Strict");
+		modeGrid.add(strict, 0, 1);
+		
 		modeTG = new ToggleGroup();
-		strict = new RadioButton("Strict mode");
-		ignore = new RadioButton("Ignore mode");
-		strict.setToggleGroup(modeTG);
-		ignore.setToggleGroup(modeTG);
+		modeTG.getToggles().addAll(ignore, strict);
+		modeTG.getToggles().get(0).setSelected(true);
 		
-		ignore.setSelected(true);
-		
-		VBox modeVBox = new VBox(strict, ignore);
-		modeVBox.setPadding(small);
-		modePane.setContent(modeVBox);
-		//endregion
-		
-		HBox radioBtnPanes = new HBox(digitPane, modePane);
-		HBox.setMargin(digitPane, new Insets(5, 0, 5, 0));
-		HBox.setMargin(modePane, new Insets(5, 5, 5, 0));
-		
-		pane.getChildren().add(radioBtnPanes);
+		modePane.setContent(modeGrid);
+		settingsGrid.add(modePane, 1,0);
 		
 		//endregion
 		
+		//region Size settings
 		// TODO: Add color and scale properties
+
+		TitledPane sizeSettings = new TitledPane();
+		sizeSettings.setText("Size");
+		sizeSettings.setCollapsible(false);
+		sizeSettings.setPadding(small);
+		
+		GridPane sizeGrid = new GridPane();
+		
+		List<Double> scales = new ArrayList<>();
+		
+		double stp = 0.05;
+		
+		for(double d = MINSCALE; d <= (MAXSCALE + stp); d += stp){
+			
+			scales.add(Math.round(d * 100.0) / 100.0);
+		}
+		
+		sizeGrid.add(new Label("Scale: "), 0, 0);
+		
+		ComboBox<Double> scaleSelector = new ComboBox<>(FXCollections.observableList(scales));
+		scaleSelector.setValue(1.00d);
+		
+		sizeGrid.add(scaleSelector, 1, 0);
+		sizeSettings.setContent(sizeGrid);
+		settingsGrid.add(sizeSettings, 0, 1);
+		
+		//endregion
+		
+		//region Color settings
+		
+		TitledPane colorSettings = new TitledPane();
+		colorSettings.setText("Color");
+		colorSettings.setCollapsible(false);
+		colorSettings.setPadding(small);
+		
+		GridPane colorGrid = new GridPane();
+		colorGrid.setHgap(5);
+		colorGrid.setVgap(5);
+		
+		colorGrid.add(new Label("Foreground: "), 0, 0);
+		colorGrid.add(new Label("Background"), 0, 1);
+		
+		foregroundColor = new ColorPicker(Color.BLACK);
+		backgroundColor = new ColorPicker(Color.WHITE);
+		
+		Circle foregroundDemonstrator = new Circle(25, foregroundColor.getValue());
+		Circle backgroundDemonstrator = new Circle(25, backgroundColor.getValue());
+		foregroundDemonstrator.setStroke(Color.BLACK);
+		backgroundDemonstrator.setStroke(Color.BLACK);
+		
+		foregroundColor.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				
+				foregroundDemonstrator.setFill(foregroundColor.getValue());
+			}
+		});
+		
+		backgroundColor.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				
+				backgroundDemonstrator.setFill(backgroundColor.getValue());
+			}
+		});
+		
+		colorGrid.add(foregroundColor, 1, 0);
+		colorGrid.add(backgroundColor, 1, 1);
+		
+		colorGrid.add(foregroundDemonstrator, 2, 0);
+		colorGrid.add(backgroundDemonstrator, 2, 1);
+		
+		colorSettings.setContent(colorGrid);
+		settingsGrid.add(colorSettings, 1, 1);
+		
+		//endregion
+		
+		pane.getChildren().add(settingsGrid);
+		
+		//endregion
 		
 		//region Optionals
 		TitledPane optionals = new TitledPane();
