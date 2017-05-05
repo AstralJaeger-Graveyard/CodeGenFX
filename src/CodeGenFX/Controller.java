@@ -3,6 +3,7 @@ package CodeGenFX;
 import CodeGenFX.Barcode.DummyBarcode;
 import CodeGenFX.Barcode.DummyInvalid;
 import CodeGenFX.Barcode.DummyWorking;
+import CodeGenFX.Barcode.EAN8;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -11,13 +12,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuItem;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -55,6 +55,8 @@ public class Controller implements Initializable {
 	
 	
 	// SplitPane
+	@FXML
+	private SplitPane splitPane;
 	
 	// Accordion
 	// TitledPane - Barcode
@@ -71,6 +73,8 @@ public class Controller implements Initializable {
 	// TODO: Evaluate needed functions and controls for this menu
 	
 	// ImageView - Barcode PreView
+	@FXML
+	private AnchorPane iBarcodePreviewContainer;
 	@FXML
 	private ImageView iBarcodePreview;
 	
@@ -92,8 +96,9 @@ public class Controller implements Initializable {
 		barcodeTypes = FXCollections.observableArrayList(
 				new DummyBarcode(),
 				// TODO: Add barcode types here (must implement iBarcode)
-				new DummyWorking(),
-				new DummyInvalid()
+//				new DummyWorking(),
+//				new DummyInvalid(),
+		      new EAN8()
 		                                                );
 		
 		iBarcodeComboBox.setItems(barcodeTypes);
@@ -122,8 +127,10 @@ public class Controller implements Initializable {
 					generate.setDisable(false);
 				}
 				
+				Node properties = iBarcode.mandatoryProperties();
+				
 				configuration.getChildren().clear();
-				configuration.getChildren().add(iBarcode.mandatoryProperties());
+				configuration.getChildren().add(properties);
 				
 				System.out.println("Current iBarcode: " + newValue);
 			}
@@ -150,6 +157,9 @@ public class Controller implements Initializable {
 				
 			}
 		});
+		
+		iBarcodePreview.fitHeightProperty().bind(iBarcodePreviewContainer.heightProperty());
+		iBarcodePreview.fitWidthProperty().bind(iBarcodePreviewContainer.heightProperty());
 		
 	}
 	
