@@ -318,15 +318,17 @@ public class EAN8 implements IBarcode{
 		Insets small = new Insets(5, 5, 5, 5);
 		
 		VBox pane = new VBox();
-		pane.setPadding(new Insets( 10, 10, 10, 10));
+		pane.setPadding(small);
 		pane.getChildren().add(new Label("Data"));
 		
 		dataInput = new TextField();
 		pane.getChildren().add(dataInput);
 		
-		//region Digit, Mode, Scale & Color settings
+		//region Digit, Mode, Scale, Color & Optional settings
 		
 		GridPane settingsGrid = new GridPane();
+		settingsGrid.setHgap(5);
+		settingsGrid.setVgap(5);
 		
 		//region Digit settings
 		
@@ -380,7 +382,6 @@ public class EAN8 implements IBarcode{
 		//endregion
 		
 		//region Size settings
-		// TODO: Add color and scale properties
 
 		TitledPane sizeSettings = new TitledPane();
 		sizeSettings.setText("Size");
@@ -458,25 +459,30 @@ public class EAN8 implements IBarcode{
 		
 		//endregion
 		
-		pane.getChildren().add(settingsGrid);
-		
-		//endregion
-		
 		//region Optionals
 		TitledPane optionals = new TitledPane();
 		optionals.setPadding(small);
 		optionals.setText("Optional Settigns");
 		optionals.setCollapsible(false);
 		
-		VBox optVBox = new VBox();
+		GridPane optionalsGrid = new GridPane();
+		optionalsGrid.setVgap(5);
+		optionalsGrid.setHgap(5);
 		
 		retardMode = new CheckBox("Strike trough");
-		debugMode = new CheckBox("Debug mode");
-		optVBox.setPadding(small);
-		optVBox.getChildren().addAll(retardMode, debugMode);
-		optionals.setContent(optVBox);
+		optionalsGrid.add(retardMode, 0, 0);
 		
-		pane.getChildren().add(optionals);
+		debugMode = new CheckBox("Debug mode");
+		optionalsGrid.add(debugMode, 0, 1);
+		
+		optionals.setContent(optionalsGrid);
+		
+		settingsGrid.add(optionals, 0, 2);
+		
+		//endregion
+		
+		pane.getChildren().add(settingsGrid);
+		
 		//endregion
 		
 		return pane;
