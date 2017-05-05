@@ -380,6 +380,9 @@ public class EAN8 implements IBarcode{
 		BufferedImage img = new BufferedImage(width + 2 * margin, heigth + 2 * margin, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = img.createGraphics();
 		
+		g.setColor(backPen);
+		g.fillRect(0,0,width + 2 * margin, heigth + 2 * margin);
+		
 		if(debug) {
 			
 			g.setColor(debugPen);
@@ -400,13 +403,13 @@ public class EAN8 implements IBarcode{
 			if(c == '1') {
 				
 				final int cmp = i;
+				
 				endY = (IntStream
 						.of(specialIdx)
 						.anyMatch(j -> j == cmp)) ? (heigth + margin / 2) : (heigth);
 				
 				g.setColor(forePen);
 				for(int x = 0; x <= bit; x++){
-					
 					
 					g.drawLine((int)(margin + i * bit + x),
 					           startY,
@@ -425,7 +428,14 @@ public class EAN8 implements IBarcode{
 			
 		}
 		
-		
+		if(retard){
+			
+			g.fillRect((int)(0.75 * margin),
+			           (int)(1.75 * margin),
+			           (int)(width + 0.50 * margin),
+			           (int)(0.10 * margin));
+			
+		}
 		
 		
 		g.dispose();
