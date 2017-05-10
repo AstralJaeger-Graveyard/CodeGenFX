@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 /**
  * Generates a not so common EAN8 barcode
  */
-public class EAN8 implements IBarcode{
+public class EAN13 implements IBarcode{
 	
 	private String data;
 	private int digits;
@@ -111,7 +111,7 @@ public class EAN8 implements IBarcode{
 		resetSettings();
 		
 		if(debug) {
-	
+			
 			System.out.println("Starting EAN 8 Generator");
 			System.out.println("Information collected: ");
 			System.out.println("> Data: " + data);
@@ -119,12 +119,12 @@ public class EAN8 implements IBarcode{
 			System.out.println("> Digits: " + digits);
 		}
 		
-	//region Check if data is valid
+		//region Check if data is valid
 		
 		int validityLevel = isValid(data);
 		
 		if(debug) {
-		
+			
 			System.out.println("> Valid: " + validityLevel);
 		}
 		
@@ -136,27 +136,27 @@ public class EAN8 implements IBarcode{
 				case 1:
 					msg = "Barcode length is invalid! Length needs to be " + digits + " digits";
 					break;
-					
+				
 				case 2:
 					msg = "Barcode length need to be at lest " + digits + "digits";
 					break;
-					
+				
 				case 3:
 					msg = "Barcode contains invalid character. EAN 8 may only contain Numbers";
 					break;
-					
+				
 				default:
 					break;
 			}
-		
-		if(! msg.equals("")) {
 			
-			throw new BarcodeException(msg);
+			if(! msg.equals("")) {
+				
+				throw new BarcodeException(msg);
+			}
 		}
-	}
-	//endregion
-	
-	//region Calculate checksum if applicable
+		//endregion
+		
+		//region Calculate checksum if applicable
 		String refData = data.substring(0, digits);
 		
 		if(digits != 8){
@@ -168,9 +168,9 @@ public class EAN8 implements IBarcode{
 			
 			System.out.println("> Ref. data: " + refData);
 		}
-	//endregion
-	
-	//region Generate raw data string
+		//endregion
+		
+		//region Generate raw data string
 		
 		String rawData = generateRaw(refData);
 		
@@ -178,13 +178,13 @@ public class EAN8 implements IBarcode{
 			
 			System.out.println("> Raw: " + rawData);
 		}
-	//endregion
-	
-	//region Render barcode
+		//endregion
+		
+		//region Render barcode
 		
 		Image barcode = renderBarcode(rawData);
 		
-	//endregion
+		//endregion
 		
 		return barcode;
 	}
@@ -194,8 +194,8 @@ public class EAN8 implements IBarcode{
 	/**
 	 * Collects the needed information from the corresponding controls
 	 */
-	protected void collectSettings(){
-	
+	private void collectSettings(){
+		
 		data = dataInput.getText();
 		
 		//region Digit count
@@ -242,8 +242,8 @@ public class EAN8 implements IBarcode{
 	/**
 	 * Resets the data textfield
 	 */
-	protected void resetSettings(){
-	
+	private void resetSettings(){
+		
 		dataInput.setText("");
 	}
 	
@@ -256,7 +256,7 @@ public class EAN8 implements IBarcode{
 	 * 2 if length invalid in ignore mode,
 	 * 3 if data contains non numerical character
 	 */
-	protected int isValid(String data){
+	private int isValid(String data){
 		
 		if(stict && (data.length() != digits)){
 			
@@ -284,7 +284,7 @@ public class EAN8 implements IBarcode{
 	 * @param data to calulate checksum from
 	 * @return checksum
 	 */
-	protected int checksum(String data){
+	private int checksum(String data){
 		
 		StringBuilder reversed = new StringBuilder();
 		reversed.append(data);
@@ -310,7 +310,7 @@ public class EAN8 implements IBarcode{
 	 * @param data to generate raw from
 	 * @return raw data
 	 */
-	protected String generateRaw(String data){
+	private String generateRaw(String data){
 		
 		StringBuilder rawData = new StringBuilder();
 		rawData.append(START_MARKER);
@@ -336,7 +336,7 @@ public class EAN8 implements IBarcode{
 	 * @param raw data to generate barcode from
 	 * @return barcode image
 	 */
-	protected Image renderBarcode(String raw){
+	private Image renderBarcode(String raw){
 		
 		int width = Math.round(WIDTH * SCALE * DPMM) ;
 		int margin = Math.round(MARGIN * SCALE * DPMM);
@@ -523,7 +523,7 @@ public class EAN8 implements IBarcode{
 		//endregion
 		
 		//region Size settings
-
+		
 		TitledPane sizeSettings = new TitledPane();
 		sizeSettings.setText("Size");
 		sizeSettings.setCollapsible(false);
@@ -636,54 +636,54 @@ public class EAN8 implements IBarcode{
 	}
 	
 	//region size definition
-//
-//	private static final Map<Double, EANDim> dimensions = new TreeMap<Double, EANDim>(){{
-//
-//		put(0.80, new EANDim(17.69, 21.38, 17.05));
-//		put(0.85, new EANDim(18.79, 22.72, 18.11));
-//		put(0.90, new EANDim(19.90, 24.06, 19.18));
-//		put(0.95, new EANDim(21.00, 25.39, 20.24));
-//		put(1.00, new EANDim(22.11, 26.73, 21.31));
-//		put(1.05, new EANDim(23.22, 28.73, 22.38));
-//		put(1.10, new EANDim(24.32, 29.40, 23.44));
-//		put(1.15, new EANDim(25.43, 30.74, 24.51));
-//		put(1.20, new EANDim(26.53, 30.74, 25.57));
-//		put(1.25, new EANDim(27.64, 33.41, 26.64));
-//		put(1.30, new EANDim(00.00, 00.00, 00.00));
-//		put(1.35, new EANDim(00.00, 00.00, 00.00));
-//		put(1.40, new EANDim(00.00, 00.00, 00.00));
-//		put(1.45, new EANDim(00.00, 00.00, 00.00));
-//		put(1.50, new EANDim(00.00, 00.00, 00.00));
-//		put(1.55, new EANDim(00.00, 00.00, 00.00));
-//		put(1.65, new EANDim(00.00, 00.00, 00.00));
-//		put(1.70, new EANDim(00.00, 00.00, 00.00));
-//		put(1.75, new EANDim(00.00, 00.00, 00.00));
-//		put(1.80, new EANDim(00.00, 00.00, 00.00));
-//		put(1.85, new EANDim(00.00, 00.00, 00.00));
-//		put(1.90, new EANDim(00.00, 00.00, 00.00));
-//		put(1.95, new EANDim(00.00, 00.00, 00.00));
-//		put(2.00, new EANDim(00.00, 00.00, 00.00));
-//	}};
-//
-//	private static class EANDim {
-//
-//		public final double MARGIN;
-//		public final double HEIGTH;
-//		public final double WIDTH;
-//
-//		public EANDim(double margin, double width, double heigth, boolean isFinal){
-//
-//			this.MARGIN = margin;
-//			this.HEIGTH = heigth;
-//			this.WIDTH = width;
-//		}
-//
-//		public EANDim(double w, double wm, double h){
-//
-//			this.MARGIN = wm - w ;
-//			this.WIDTH = w;
-//			this.HEIGTH = h;
-//		}
-//	}
-//endregion
+	//
+	//	private static final Map<Double, EANDim> dimensions = new TreeMap<Double, EANDim>(){{
+	//
+	//		put(0.80, new EANDim(17.69, 21.38, 17.05));
+	//		put(0.85, new EANDim(18.79, 22.72, 18.11));
+	//		put(0.90, new EANDim(19.90, 24.06, 19.18));
+	//		put(0.95, new EANDim(21.00, 25.39, 20.24));
+	//		put(1.00, new EANDim(22.11, 26.73, 21.31));
+	//		put(1.05, new EANDim(23.22, 28.73, 22.38));
+	//		put(1.10, new EANDim(24.32, 29.40, 23.44));
+	//		put(1.15, new EANDim(25.43, 30.74, 24.51));
+	//		put(1.20, new EANDim(26.53, 30.74, 25.57));
+	//		put(1.25, new EANDim(27.64, 33.41, 26.64));
+	//		put(1.30, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.35, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.40, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.45, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.50, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.55, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.65, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.70, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.75, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.80, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.85, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.90, new EANDim(00.00, 00.00, 00.00));
+	//		put(1.95, new EANDim(00.00, 00.00, 00.00));
+	//		put(2.00, new EANDim(00.00, 00.00, 00.00));
+	//	}};
+	//
+	//	private static class EANDim {
+	//
+	//		public final double MARGIN;
+	//		public final double HEIGTH;
+	//		public final double WIDTH;
+	//
+	//		public EANDim(double margin, double width, double heigth, boolean isFinal){
+	//
+	//			this.MARGIN = margin;
+	//			this.HEIGTH = heigth;
+	//			this.WIDTH = width;
+	//		}
+	//
+	//		public EANDim(double w, double wm, double h){
+	//
+	//			this.MARGIN = wm - w ;
+	//			this.WIDTH = w;
+	//			this.HEIGTH = h;
+	//		}
+	//	}
+	//endregion
 }
